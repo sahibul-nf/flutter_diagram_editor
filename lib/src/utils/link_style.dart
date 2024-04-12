@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:diagram_editor/src/utils/vector_utils.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ enum ArrowType {
   none,
   arrow,
   pointedArrow,
+  roundedPointedArrow,
   circle,
   centerCircle,
   semiCircle,
@@ -18,11 +20,21 @@ enum LineType {
   dotted,
 }
 
+enum LinkType {
+  straight,
+  curved,
+}
+
 class LinkStyle {
   /// Defines the design of the link's line.
   ///
   /// It can be [LineType.solid], [LineType.dashed] or [LineType.dotted].
   LineType lineType;
+
+  /// Defines the type of the link.
+  ///
+  /// It can be [LinkType.straight] or [LinkType.curved].
+  LinkType linkType;
 
   /// Defines the design of the link's front arrowhead.
   ///
@@ -48,6 +60,7 @@ class LinkStyle {
 
   /// Defines a visual design of a link on the canvas.
   LinkStyle({
+    this.linkType = LinkType.curved,
     this.lineType = LineType.solid,
     this.arrowType = ArrowType.none,
     this.backArrowType = ArrowType.none,
@@ -72,6 +85,8 @@ class LinkStyle {
         return getArrowPath(arrowSize, point1, point2, scale, 1);
       case ArrowType.pointedArrow:
         return getArrowPath(arrowSize, point1, point2, scale, 2);
+      case ArrowType.roundedPointedArrow:
+        return getPointedArrow(arrowSize, point1, point2, scale);
       case ArrowType.circle:
         return getCirclePath(arrowSize, point1, point2, scale, false);
       case ArrowType.centerCircle:
@@ -82,6 +97,18 @@ class LinkStyle {
   }
 
   Path getLinePath(Offset point1, Offset point2, double scale) {
+    if (linkType == LinkType.curved) {
+      switch (lineType) {
+        case LineType.solid:
+          return getCurvedLinePath(point1, point2, scale);
+        case LineType.dashed:
+          return getCurveDashedLinePath(point1, point2, scale);
+        case LineType.dotted:
+          return getCurveDottedLinePath(point1, point2, scale);
+      }
+    }
+
+    // linkType == LinkType.straight
     switch (lineType) {
       case LineType.solid:
         return getSolidLinePath(point1, point2);
@@ -143,6 +170,133 @@ class LinkStyle {
     return path;
   }
 
+  Path getPointedArrow(
+    double arrowSize,
+    Offset point1,
+    Offset point2,
+    double scale,
+  ) {
+    // Path path = new Path();
+
+    // double angle = 30;
+    // double length = 10;
+
+    // Offset left = point2 +
+    //     VectorUtils.normalizeVector(
+    //             VectorUtils.getPerpendicularVector(point1, point2)) *
+    //         arrowSize *
+    //         scale -
+    //     VectorUtils.normalizeVector(
+    //             VectorUtils.getDirectionVector(point1, point2)) *
+    //         length *
+    //         scale;
+
+    // Offset right = point2 -
+    //     VectorUtils.normalizeVector(
+    //             VectorUtils.getPerpendicularVector(point1, point2)) *
+    //         arrowSize *
+    //         scale -
+    //     VectorUtils.normalizeVector(
+    //             VectorUtils.getDirectionVector(point1, point2)) *
+    //         length *
+    //         scale;
+
+    // Offset middle = point2 -
+    //     VectorUtils.normalizeVector(
+    //             VectorUtils.getDirectionVector(point1, point2)) *
+    //         arrowSize *
+    //         scale;
+
+    // path.moveTo(point2.dx, point2.dy);
+    // path.lineTo(left.dx, left.dy);
+    // path.lineTo(middle.dx, middle.dy);
+    // path.lineTo(right.dx, right.dy);
+    // path.close();
+
+    Path path = Path();
+
+    // double angle = 30;
+    // double length = 10;
+
+    // Offset left = point2 +
+    //     VectorUtils.normalizeVector(
+    //         VectorUtils.getPerpendicularVector(point1, point2)) *
+    //         arrowSize *
+    //         scale -
+    //     VectorUtils.normalizeVector(
+    //         VectorUtils.getDirectionVector(point1, point2)) *
+    //         length *
+    //         scale;
+
+    // Offset right = point2 -
+    //     VectorUtils.normalizeVector(
+    //         VectorUtils.getPerpendicularVector(point1, point2)) *
+    //         arrowSize *
+    //         scale -
+    //     VectorUtils.normalizeVector(
+    //         VectorUtils.getDirectionVector(point1, point2)) *
+    //         length *
+    //         scale;
+
+    // Offset middle = point2 -
+    //     VectorUtils.normalizeVector(
+    //         VectorUtils.getDirectionVector(point1, point2)) *
+    //         arrowSize *
+    //         scale;
+
+    // // Menambahkan kurva Bezier untuk membuat ujung panah menjadi rounded
+    // path.moveTo(point2.dx, point2.dy);
+    // path.lineTo(left.dx, left.dy);
+    // path.quadraticBezierTo(
+    //     middle.dx, middle.dy, right.dx, right.dy); // Menambahkan kurva Bezier
+    // path.close();
+
+    double length = 10;
+
+    Offset left = point2 +
+        VectorUtils.normalizeVector(
+                VectorUtils.getPerpendicularVector(point1, point2)) *
+            arrowSize *
+            scale -
+        VectorUtils.normalizeVector(
+                VectorUtils.getDirectionVector(point1, point2)) *
+            length *
+            scale;
+
+    Offset right = point2 -
+        VectorUtils.normalizeVector(
+                VectorUtils.getPerpendicularVector(point1, point2)) *
+            arrowSize *
+            scale -
+        VectorUtils.normalizeVector(
+                VectorUtils.getDirectionVector(point1, point2)) *
+            length *
+            scale;
+
+    Offset middle = point2 -
+        VectorUtils.normalizeVector(
+                VectorUtils.getDirectionVector(point1, point2)) *
+            arrowSize *
+            scale;
+
+    // Menambahkan kurva Bezier untuk membuat ujung panah menjadi rounded
+    path.moveTo(point2.dx, point2.dy);
+    path.lineTo(left.dx, left.dy);
+
+    // Membuat kurva Bezier kubik untuk membuat ujung panah menjadi rounded
+    path.cubicTo(
+        middle.dx + (left.dx - middle.dx) / 2,
+        middle.dy + (left.dy - middle.dy) / 2,
+        middle.dx + (right.dx - middle.dx) / 2,
+        middle.dy + (right.dy - middle.dy) / 2,
+        right.dx,
+        right.dy);
+
+    path.close();
+
+    return path;
+  }
+
   Path getSemiCirclePath(
       double arrowSize, Offset point1, Offset point2, double scale) {
     Path path = new Path();
@@ -168,6 +322,8 @@ class LinkStyle {
         return arrowSize - eps;
       case ArrowType.pointedArrow:
         return (arrowSize * 2) - eps;
+      case ArrowType.roundedPointedArrow:
+        return (arrowSize * 2) - eps;
       case ArrowType.circle:
         return arrowSize - eps;
       case ArrowType.centerCircle:
@@ -177,10 +333,58 @@ class LinkStyle {
     }
   }
 
+  Path getCurvedLinePath(Offset point1, Offset point2, double scale) {
+    Path path = new Path();
+    path.moveTo(point1.dx, point1.dy);
+
+    Offset middle = point1 + (point2 - point1) * 0.5;
+    Offset control1 = Offset(middle.dx, point1.dy);
+    Offset control2 = Offset(middle.dx, point2.dy);
+
+    path.cubicTo(
+      control1.dx,
+      control1.dy,
+      control2.dx,
+      control2.dy,
+      point2.dx,
+      point2.dy,
+    );
+
+    // path = ArrowPath.addTip(
+    //   path,
+    //   tipLength: 10,
+    //   tipAngle: math.pi / 6,
+    // );
+
+    return path;
+  }
+
   Path getSolidLinePath(Offset point1, Offset point2) {
     Path path = new Path();
     path.moveTo(point1.dx, point1.dy);
     path.lineTo(point2.dx, point2.dy);
+    return path;
+  }
+
+  Path getCurveDashedOrDottedLinePath(Offset point1, Offset point2,
+      double scale, double dashLength, double dashSpace) {
+    var curvePath = getCurvedLinePath(point1, point2, scale);
+
+    Path path = new Path();
+    PathMetrics pathMetrics = curvePath.computeMetrics();
+
+    for (PathMetric pathMetric in pathMetrics) {
+      double currentDistance = 0;
+      while (currentDistance < pathMetric.length) {
+        Path extractPath = pathMetric.extractPath(
+          currentDistance,
+          currentDistance + dashLength * scale,
+        );
+        path.addPath(extractPath, Offset.zero);
+        currentDistance += dashLength * scale + dashSpace * scale;
+      }
+    }
+
     return path;
   }
 
@@ -223,8 +427,22 @@ class LinkStyle {
     return path;
   }
 
+  Path getCurveDashedLinePath(Offset point1, Offset point2, double scale) {
+    return getCurveDashedOrDottedLinePath(point1, point2, scale, 16, 16);
+  }
+
+  Path getDottedLinePath(Offset point1, Offset point2, double scale) {
+    return getDashedLinePath(point1, point2, scale, lineWidth, lineWidth * 5);
+  }
+
+  Path getCurveDottedLinePath(Offset point1, Offset point2, double scale) {
+    return getCurveDashedOrDottedLinePath(
+        point1, point2, scale, lineWidth, lineWidth * 5);
+  }
+
   LinkStyle.fromJson(Map<String, dynamic> json)
-      : lineType = LineType.values[json['line_type']],
+      : linkType = LinkType.values[json['link_type']],
+        lineType = LineType.values[json['line_type']],
         arrowType = ArrowType.values[json['arrow_type']],
         backArrowType = ArrowType.values[json['back_arrow_type']],
         arrowSize = json['arrow_size'],
@@ -233,6 +451,7 @@ class LinkStyle {
         color = Color(int.parse(json['color'], radix: 16));
 
   Map<String, dynamic> toJson() => {
+        'link_type': linkType.index,
         'line_type': lineType.index,
         'arrow_type': arrowType.index,
         'back_arrow_type': backArrowType.index,

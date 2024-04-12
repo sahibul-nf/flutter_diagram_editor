@@ -18,6 +18,8 @@ class LinkPainter extends CustomPainter {
     var paint = Paint()
       ..color = linkStyle.color
       ..strokeWidth = linkStyle.lineWidth * scale
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
       ..style = PaintingStyle.stroke;
 
     for (int i = 0; i < linkPoints.length - 1; i++) {

@@ -75,9 +75,9 @@ class Link extends StatelessWidget {
                       child: CustomPaint(
                         painter: LinkJointPainter(
                           location: canvasState.toCanvasCoordinates(jointPoint),
-                          radius: 8,
+                          radius: 5,
                           scale: canvasState.scale,
-                          color: linkData.linkStyle.color.withOpacity(0.5),
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),
