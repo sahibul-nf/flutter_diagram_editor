@@ -8,7 +8,8 @@ enum ArrowType {
   none,
   arrow,
   pointedArrow,
-  roundedPointedArrow,
+  pointedArrow1,
+  pointedArrow2,
   circle,
   centerCircle,
   semiCircle,
@@ -82,10 +83,12 @@ class LinkStyle {
       case ArrowType.none:
         return Path();
       case ArrowType.arrow:
-        return getArrowPath(arrowSize, point1, point2, scale, 1);
+        return getArrowPath(arrowSize, point1, point2, scale, 1.5);
       case ArrowType.pointedArrow:
-        return getArrowPath(arrowSize, point1, point2, scale, 2);
-      case ArrowType.roundedPointedArrow:
+        return getArrowPath(arrowSize, point1, point2, scale, 2.5);
+      case ArrowType.pointedArrow1:
+        return getPointedArrow(arrowSize, point1, point2, scale);
+      case ArrowType.pointedArrow2:
         return getPointedArrow(arrowSize, point1, point2, scale);
       case ArrowType.circle:
         return getCirclePath(arrowSize, point1, point2, scale, false);
@@ -322,7 +325,9 @@ class LinkStyle {
         return arrowSize - eps;
       case ArrowType.pointedArrow:
         return (arrowSize * 2) - eps;
-      case ArrowType.roundedPointedArrow:
+      case ArrowType.pointedArrow1:
+        return (arrowSize * 2) - eps;
+      case ArrowType.pointedArrow2:
         return (arrowSize * 2) - eps;
       case ArrowType.circle:
         return arrowSize - eps;
