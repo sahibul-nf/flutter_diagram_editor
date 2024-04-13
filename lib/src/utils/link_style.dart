@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:diagram_editor/src/utils/vector_utils.dart';
@@ -87,9 +87,9 @@ class LinkStyle {
       case ArrowType.pointedArrow:
         return getArrowPath(arrowSize, point1, point2, scale, 2.5);
       case ArrowType.pointedArrow1:
-        return getPointedArrow(arrowSize, point1, point2, scale);
+        return getPointedArrowPath1(arrowSize, point1, point2, scale);
       case ArrowType.pointedArrow2:
-        return getPointedArrow(arrowSize, point1, point2, scale);
+        return getPointedArrowPath2(arrowSize, point1, point2, scale);
       case ArrowType.circle:
         return getCirclePath(arrowSize, point1, point2, scale, false);
       case ArrowType.centerCircle:
@@ -173,86 +173,13 @@ class LinkStyle {
     return path;
   }
 
-  Path getPointedArrow(
+  Path getPointedArrowPath1(
     double arrowSize,
     Offset point1,
     Offset point2,
     double scale,
   ) {
-    // Path path = new Path();
-
-    // double angle = 30;
-    // double length = 10;
-
-    // Offset left = point2 +
-    //     VectorUtils.normalizeVector(
-    //             VectorUtils.getPerpendicularVector(point1, point2)) *
-    //         arrowSize *
-    //         scale -
-    //     VectorUtils.normalizeVector(
-    //             VectorUtils.getDirectionVector(point1, point2)) *
-    //         length *
-    //         scale;
-
-    // Offset right = point2 -
-    //     VectorUtils.normalizeVector(
-    //             VectorUtils.getPerpendicularVector(point1, point2)) *
-    //         arrowSize *
-    //         scale -
-    //     VectorUtils.normalizeVector(
-    //             VectorUtils.getDirectionVector(point1, point2)) *
-    //         length *
-    //         scale;
-
-    // Offset middle = point2 -
-    //     VectorUtils.normalizeVector(
-    //             VectorUtils.getDirectionVector(point1, point2)) *
-    //         arrowSize *
-    //         scale;
-
-    // path.moveTo(point2.dx, point2.dy);
-    // path.lineTo(left.dx, left.dy);
-    // path.lineTo(middle.dx, middle.dy);
-    // path.lineTo(right.dx, right.dy);
-    // path.close();
-
     Path path = Path();
-
-    // double angle = 30;
-    // double length = 10;
-
-    // Offset left = point2 +
-    //     VectorUtils.normalizeVector(
-    //         VectorUtils.getPerpendicularVector(point1, point2)) *
-    //         arrowSize *
-    //         scale -
-    //     VectorUtils.normalizeVector(
-    //         VectorUtils.getDirectionVector(point1, point2)) *
-    //         length *
-    //         scale;
-
-    // Offset right = point2 -
-    //     VectorUtils.normalizeVector(
-    //         VectorUtils.getPerpendicularVector(point1, point2)) *
-    //         arrowSize *
-    //         scale -
-    //     VectorUtils.normalizeVector(
-    //         VectorUtils.getDirectionVector(point1, point2)) *
-    //         length *
-    //         scale;
-
-    // Offset middle = point2 -
-    //     VectorUtils.normalizeVector(
-    //         VectorUtils.getDirectionVector(point1, point2)) *
-    //         arrowSize *
-    //         scale;
-
-    // // Menambahkan kurva Bezier untuk membuat ujung panah menjadi rounded
-    // path.moveTo(point2.dx, point2.dy);
-    // path.lineTo(left.dx, left.dy);
-    // path.quadraticBezierTo(
-    //     middle.dx, middle.dy, right.dx, right.dy); // Menambahkan kurva Bezier
-    // path.close();
 
     double length = 10;
 
@@ -300,6 +227,51 @@ class LinkStyle {
     return path;
   }
 
+  Path getPointedArrowPath2(
+    double arrowSize,
+    Offset point1,
+    Offset point2,
+    double scale,
+  ) {
+    Path path = new Path();
+
+    double length = 10;
+
+    Offset left = point2 +
+        VectorUtils.normalizeVector(
+                VectorUtils.getPerpendicularVector(point1, point2)) *
+            arrowSize *
+            scale -
+        VectorUtils.normalizeVector(
+                VectorUtils.getDirectionVector(point1, point2)) *
+            length *
+            scale;
+
+    Offset right = point2 -
+        VectorUtils.normalizeVector(
+                VectorUtils.getPerpendicularVector(point1, point2)) *
+            arrowSize *
+            scale -
+        VectorUtils.normalizeVector(
+                VectorUtils.getDirectionVector(point1, point2)) *
+            length *
+            scale;
+
+    Offset middle = point2 -
+        VectorUtils.normalizeVector(
+                VectorUtils.getDirectionVector(point1, point2)) *
+            arrowSize *
+            scale;
+
+    path.moveTo(point2.dx, point2.dy);
+    path.lineTo(left.dx, left.dy);
+    path.lineTo(middle.dx, middle.dy);
+    path.lineTo(right.dx, right.dy);
+    path.close();
+
+    return path;
+  }
+
   Path getSemiCirclePath(
       double arrowSize, Offset point1, Offset point2, double scale) {
     Path path = new Path();
@@ -310,8 +282,8 @@ class LinkStyle {
             scale;
     path.addArc(
       Rect.fromCircle(center: circleCenter, radius: scale * arrowSize),
-      math.pi - math.atan2(point2.dx - point1.dx, point2.dy - point1.dy),
-      -math.pi,
+      pi - atan2(point2.dx - point1.dx, point2.dy - point1.dy),
+      -pi,
     );
     return path;
   }
@@ -354,12 +326,6 @@ class LinkStyle {
       point2.dx,
       point2.dy,
     );
-
-    // path = ArrowPath.addTip(
-    //   path,
-    //   tipLength: 10,
-    //   tipAngle: math.pi / 6,
-    // );
 
     return path;
   }
