@@ -209,11 +209,9 @@ class LinkStyle {
             arrowSize *
             scale;
 
-    // Menambahkan kurva Bezier untuk membuat ujung panah menjadi rounded
     path.moveTo(point2.dx, point2.dy);
     path.lineTo(left.dx, left.dy);
 
-    // Membuat kurva Bezier kubik untuk membuat ujung panah menjadi rounded
     path.cubicTo(
         middle.dx + (left.dx - middle.dx) / 2,
         middle.dy + (left.dy - middle.dy) / 2,
