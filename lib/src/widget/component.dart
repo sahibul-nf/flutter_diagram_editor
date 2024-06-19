@@ -39,7 +39,7 @@ class Component extends StatelessWidget {
                 left: 0,
                 top: 0,
                 width: componentData.size.width,
-                height: componentData.size.height,
+                // height: componentData.size.height,
                 child: Container(
                   transform: Matrix4.identity()..scale(canvasState.scale),
                   child: policy.showComponentBody(componentData),
