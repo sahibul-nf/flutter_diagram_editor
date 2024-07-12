@@ -13,6 +13,7 @@ enum ArrowType {
   circle,
   centerCircle,
   semiCircle,
+  crowFootOne,
 }
 
 enum LineType {
@@ -79,6 +80,13 @@ class LinkStyle {
     Offset point2,
     double scale,
   ) {
+    point2 = point2 -
+        VectorUtils.normalizeVector(
+                VectorUtils.getDirectionVector(point1, point2)) *
+            arrowSize *
+            scale *
+            0.3; // 0.3 to make gap between first point and arrow head
+
     switch (arrowType) {
       case ArrowType.none:
         return Path();
@@ -96,6 +104,8 @@ class LinkStyle {
         return getCirclePath(arrowSize, point1, point2, scale, true);
       case ArrowType.semiCircle:
         return getSemiCirclePath(arrowSize, point1, point2, scale);
+      case ArrowType.crowFootOne:
+        return drawZeroOrOne(point1, point2, scale, arrowSize);
     }
   }
 
@@ -135,6 +145,7 @@ class LinkStyle {
             pointed *
             arrowSize *
             scale;
+
     Offset right = point2 -
         VectorUtils.normalizeVector(
                 VectorUtils.getPerpendicularVector(point1, point2)) *
@@ -160,15 +171,26 @@ class LinkStyle {
       double scale, bool isCenter) {
     Path path = new Path();
     if (isCenter) {
-      path.addOval(Rect.fromCircle(center: point2, radius: scale * arrowSize));
+      path.addOval(Rect.fromCircle(
+        center: point2 -
+            VectorUtils.normalizeVector(
+                    VectorUtils.getDirectionVector(point1, point2)) *
+                arrowSize *
+                scale *
+                0.8, // 0.8 to make gap between circle first point
+        radius: scale * arrowSize * 0.8, // 0.8 to make small circle
+      ));
     } else {
       Offset circleCenter = point2 -
           VectorUtils.normalizeVector(
                   VectorUtils.getDirectionVector(point1, point2)) *
               arrowSize *
-              scale;
-      path.addOval(
-          Rect.fromCircle(center: circleCenter, radius: scale * arrowSize));
+              scale *
+              0.8; // 0.8 to make gap between circle first point
+      path.addOval(Rect.fromCircle(
+        center: circleCenter,
+        radius: scale * arrowSize * 0.8, // 0.8 to make small circle
+      ));
     }
     return path;
   }
@@ -286,13 +308,46 @@ class LinkStyle {
     return path;
   }
 
+  double calculateAngle(Offset p1, Offset p2) {
+    return atan2(p2.dy - p1.dy, p2.dx - p1.dx);
+  }
+
+  // Draws a small circle 'O' and a single line '|'
+  Path drawZeroOrOne(
+      Offset point1, Offset point2, double scale, double arrowSize) {
+    Path path = new Path();
+
+    // Draw a small circle
+    Offset circleCenter = point2 -
+        VectorUtils.normalizeVector(
+                VectorUtils.getDirectionVector(point1, point2)) *
+            arrowSize *
+            scale *
+            3; // 3 to make gap between circle first point
+
+    path.addOval(
+        Rect.fromCircle(center: circleCenter, radius: scale * arrowSize));
+
+    // Draw a vertical line `|`
+
+    path.addRect(
+      Rect.fromPoints(
+        Offset(point2.dx - scale * 0.5, point2.dy - scale * arrowSize),
+        Offset(point2.dx + scale * 0.5, point2.dy + scale * arrowSize),
+      ),
+    );
+
+    return path;
+  }
+
+  /// Returns the length of the arrowhead that should be shortened at the end of the line.
   double getEndShortening(ArrowType arrowType) {
-    double eps = 0.05;
+    double eps = 5;
     switch (arrowType) {
       case ArrowType.none:
-        return 0;
+        return arrowSize * 0.5;
       case ArrowType.arrow:
-        return arrowSize - eps;
+        return (arrowSize * 2) - eps;
       case ArrowType.pointedArrow:
         return (arrowSize * 2) - eps;
       case ArrowType.pointedArrow1:
@@ -300,11 +355,13 @@ class LinkStyle {
       case ArrowType.pointedArrow2:
         return (arrowSize * 2) - eps;
       case ArrowType.circle:
-        return arrowSize - eps;
+        return (arrowSize * 2) - eps;
       case ArrowType.centerCircle:
-        return 0;
+        return (arrowSize * 2) - eps;
       case ArrowType.semiCircle:
-        return arrowSize - eps;
+        return (arrowSize * 2) - eps;
+      default:
+        return 0;
     }
   }
 
