@@ -240,7 +240,7 @@ mixin CustomPolicy implements PolicySet {
     canvasWriter.model.removeAllComponents();
     canvasWriter.model.deserializeDiagram(
       serializedDiagram,
-      decodeCustomComponentData: (json) => MyComponentData.fromJson(json),
+      decodeCustomComponentData: (json, type) => MyComponentData.fromJson(json),
       decodeCustomLinkData: null,
     );
   }

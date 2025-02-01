@@ -12,7 +12,7 @@ class DiagramData {
 
   DiagramData.fromJson(
     Map<String, dynamic> json, {
-    Function(Map<String, dynamic> json)? decodeCustomComponentData,
+    Function(Map<String, dynamic> json, String? type)? decodeCustomComponentData,
     Function(Map<String, dynamic> json)? decodeCustomLinkData,
   })  : components = (json['components'] as List)
             .map((componentJson) => ComponentData.fromJson(

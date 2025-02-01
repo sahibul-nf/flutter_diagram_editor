@@ -79,7 +79,7 @@ class CanvasModelWriter extends ModelWriter
   /// Deleting existing diagram is recommended.
   deserializeDiagram(
     String json, {
-    Function(Map<String, dynamic> json)? decodeCustomComponentData,
+    Function(Map<String, dynamic> json, String? type)? decodeCustomComponentData,
     Function(Map<String, dynamic> json)? decodeCustomLinkData,
   }) {
     final diagram = DiagramData.fromJson(

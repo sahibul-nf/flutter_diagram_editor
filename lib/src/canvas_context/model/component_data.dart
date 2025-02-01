@@ -168,7 +168,7 @@ class ComponentData with ChangeNotifier {
 
   ComponentData.fromJson(
     Map<String, dynamic> json, {
-    Function(Map<String, dynamic> json)? decodeCustomComponentData,
+    Function(Map<String, dynamic> json, String? type)? decodeCustomComponentData,
   })  : id = json['id'],
         position = Offset(json['position'][0], json['position'][1]),
         size = Size(json['size'][0], json['size'][1]),
@@ -176,7 +176,7 @@ class ComponentData with ChangeNotifier {
         type = json['type'],
         zOrder = json['z_order'],
         parentId = json['parent_id'],
-        data = decodeCustomComponentData?.call(json['dynamic_data']) {
+        data = decodeCustomComponentData?.call(json['dynamic_data'], json['type']) {
     this.childrenIds.addAll(
         (json['children_ids'] as List).map((id) => id as String).toList());
     this.connections.addAll((json['connections'] as List)
